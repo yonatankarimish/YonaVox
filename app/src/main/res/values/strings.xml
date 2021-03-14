@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">YonaVox</string>
+    <string name="app_title">Air conditioner voice activation</string>
+    <string name="welcome_text">Hello there!</string>
+    <string name="edit_key">Sensibo API key</string>
+    <string name="save_key">Save Key</string>
+    <string name="edit_device_id">Sensibo Device ID</string>
+    <string name="recording_notification">YonaVox is recording your voice in the background</string>
+</resources>
