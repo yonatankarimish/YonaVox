@@ -23,7 +23,7 @@ public class Constants {
     public static final int MAX_SILENT_SAMPLES = (int)Math.floor(0.3 * SAMPLE_RATE);
     public static final int UTTER_WINDOW_SIZE = (int)Math.floor(0.3 * SAMPLE_RATE);
     public static final int SILENCE_WINDOW_SIZE = (int)Math.floor(0.33 * SAMPLE_RATE);
-    public static final float SPEECH_AMPLITUDE = 1e-3f;
+    public static final float SPEECH_AMPLITUDE = 5e-4f;
 
     public static final float EPSILON = 1e-12f;
 }

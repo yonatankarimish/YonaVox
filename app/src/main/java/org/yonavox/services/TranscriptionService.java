@@ -14,6 +14,7 @@ import org.yonavox.util.PreprocessUtils;
 import org.yonavox.util.SensiboUtils;
 
 import java.io.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -62,11 +63,12 @@ public class TranscriptionService extends Service {
     //Converts speech to text; The core of the entire app.
     private String transcribe(float[] pcmData){
         float[][] spectrogram = PreprocessUtils.preprocess(pcmData);
+        long startTime = new Date().getTime();
         long[] tensorShape = getDimensions(spectrogram);
 
         float[] flatSpectro = ArrayUtils.concat(spectrogram);
         IValue spectroTensor = IValue.from(Tensor.fromBlob(flatSpectro, tensorShape));
-        //IValue spectroTensor = IValue.from(Tensor.fromBlob(new float[(int)(dim0 * dim1 * dim2 * dim3)], tensorShape));
+        //IValue spectroTensor = IValue.from(Tensor.fromBlob(new float[(int)(138 * 80)], tensorShape));
         IValue[] encoderResults = voxEncoder.forward(spectroTensor).toTuple();
 
         IValue encoderOutput = encoderResults[0];
@@ -101,6 +103,8 @@ public class TranscriptionService extends Service {
             }
         }
 
+        long endTime = new Date().getTime();
+        System.out.println("Phoneme prediction took " + (endTime - startTime) + " ms");
         return predictedSyllables.toString();
     }
 
@@ -126,7 +130,6 @@ public class TranscriptionService extends Service {
         syllableToToken.put("Dle", tokenIdx++);
         syllableToToken.put("Dli", tokenIdx++);
         syllableToToken.put("E", tokenIdx++);
-        syllableToToken.put("Et", tokenIdx++);
         syllableToToken.put("F", tokenIdx++);
         syllableToToken.put("Gan", tokenIdx++);
         syllableToToken.put("Ha", tokenIdx++);
@@ -161,24 +164,28 @@ public class TranscriptionService extends Service {
         if(predictedPhrase.contains("ha dle k ma z gan")
                 || predictedPhrase.contains("ha f e l ma z gan")
                 || predictedPhrase.contains("ta f i l ma z gan")
-                || predictedPhrase.contains("ha dle k et ha ma z gan")
-                || predictedPhrase.contains("ha f e l et ha ma z gan")
-                || predictedPhrase.contains("ta f i l et ha ma z gan")){
+                || predictedPhrase.contains("ha dle k e t ha ma z gan")
+                || predictedPhrase.contains("ha f e l e t ha ma z gan")
+                || predictedPhrase.contains("ta f i l e t ha ma z gan")){
             //These are all variations of "Turn on the AC" in Hebrew
             SensiboUtils.turnOn();
         }else if(predictedPhrase.contains("ka be ma z gan")
                 || predictedPhrase.contains("te xa be ma z gan")
-                || predictedPhrase.contains("ka be et ha ma z gan")
-                || predictedPhrase.contains("te xa be et ha ma z gan")){
+                || predictedPhrase.contains("ka be e t ha ma z gan")
+                || predictedPhrase.contains("te xa be e t ha ma z gan")){
             //These are all variations of "Turn off the AC" in Hebrew
             SensiboUtils.turnOff();
         }else if(predictedPhrase.contains("kar po") //"It's cold here"
+                || predictedPhrase.contains("xa mem po") //"Warm this place up"
                 || predictedPhrase.contains("te xa mem po") //"Warm this place up"
-                || predictedPhrase.contains("te xa mem et ha sa lon")){ //"Warm the lounge up"
+                || predictedPhrase.contains("xa mem e t ha sa lon") //"Warm the lounge up"
+                || predictedPhrase.contains("te xa mem e t ha sa lon")){ //"Warm the lounge up"
             SensiboUtils.heat();
         }else if(predictedPhrase.contains("xam po") //"It's hot here"
+                || predictedPhrase.contains("ka re r po") //"Cool this place down"
                 || predictedPhrase.contains("te ka re r po") //"Cool this place down"
-                || predictedPhrase.contains("te ka re r et ha sa lon")){ //"Cool the lounge down"
+                || predictedPhrase.contains("ka re r e t ha sa lon") //"Cool the lounge down"
+                || predictedPhrase.contains("te ka re r e t ha sa lon")){ //"Cool the lounge down"
             SensiboUtils.cool();
         }
     }

@@ -1,13 +1,12 @@
 package org.yonavox.services;
 
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.app.Service;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -18,6 +17,7 @@ import org.yonavox.util.Constants;
 public class RecordingService extends Service {
     private static Context appContext;
     private static AudioRecord audioRecorder;
+    private static final String MESSAGE_CHANNEL_ID = "Recording Channel";
     private static final int SERVICE_MESSAGE_ID = 42;
     private static final int BUFFER_SIZE = AudioRecord.getMinBufferSize(Constants.SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_FLOAT);
     private static final float[] cyclicPcmData = new float[Constants.DOWNSAMPLE_COEFFICIENT * Constants.SPECTROGRAM_TIMESTAMPS]; //That's about 2.25 seconds worth of audio
@@ -39,9 +39,22 @@ public class RecordingService extends Service {
                 BUFFER_SIZE
         );
 
+        /*Create the NotificationChannel, but only on API 26+ because the NotificationChannel class is new and not in the support library
+        Register the channel with the system; you can't change the importance  or other notification behaviors after this*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    MESSAGE_CHANNEL_ID,
+                    "Default channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            channel.setDescription("Used for YonaVox recording notifications");
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        Notification recordNotification = new NotificationCompat.Builder(this, "Recording Service Notification")
+        Notification recordNotification = new NotificationCompat.Builder(this, MESSAGE_CHANNEL_ID)
                 .setContentTitle(getText(R.string.app_name))
                 .setContentText(getText(R.string.recording_notification))
                 .setSmallIcon(R.drawable.ic_signal_wave)

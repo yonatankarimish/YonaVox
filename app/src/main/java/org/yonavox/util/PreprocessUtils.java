@@ -45,7 +45,6 @@ public class PreprocessUtils {
         float[][] melSpectrogram = melScaleConverter.convert(spectrogram);
         long mlTime = new Date().getTime();
         System.out.println("Log-mel conversion took " + (mlTime - spTime) + " ms");
-        //Bitmap melImg = toImage(melSpectrogram);
 
         System.out.println("Finished converting audio => spectrogram");
         return melSpectrogram;
