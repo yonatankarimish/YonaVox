@@ -10,11 +10,8 @@ As far as the model is concerned, because it never listened to anyone else durin
 Meaning it might respong to your commands, but it might just not.
 
 The models were trained using a Google Colaboratory environment on a Tesla P100 GPU.
-You can access the training data, preprocessing pipeline and training code at the following link:
-https://drive.google.com/drive/folders/1g0WQCYhRpJebZS8S1D4uE5_pdWj_wn9_ 
+You can access the training data, preprocessing pipeline and training code <a href="https://drive.google.com/drive/folders/1g0WQCYhRpJebZS8S1D4uE5_pdWj_wn9_">at the following link</a>. If you wish, you can also read the full research paper <a href="https://arxiv.org/abs/2103.13997">at this link</a>.
 
 It is important to state this is not a production ready app in any way. 
 Rather, is is meant as a proof of concept showing it is possible to train small models for home use.
 Feel free to have a look at the code and build your own APK from the source, if you want to install it on your phone for whatever reason.
-
-I will link the research paper behind the model and the medium article explaining the algorithms once they are both published.
